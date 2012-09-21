@@ -1,0 +1,18 @@
+# Eclipse configuration and build files
+/.classpath
+/.project
+/.settings
+/eclipse-build
+/eclipse-config
+
+# Idea configuration and build files
+/.idea
+/*.iml
+/*.ipr
+/*.iws
+/out
+/build
+
+# Gradle files
+/.gradle
+/gradle.properties
