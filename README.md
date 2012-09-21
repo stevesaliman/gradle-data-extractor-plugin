@@ -23,7 +23,7 @@ it you your local maven repo, then dd the following to your build.gradle file.
 ```groovy
 buildscript {
 	repositories {
-		mavenCentral()
+		mavenLocal()
 	}
 	dependencies {
 		classpath "net.saliman:gradle-data-extractor-plugin:1.0.0"
