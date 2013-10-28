@@ -18,7 +18,7 @@ Usage
 
 I haven't published this to maven central yet, so if you want to use this
 plugin, you'll have to download the source, do a "gradle install" to install
-it you your local maven repo, then dd the following to your build.gradle file.
+it you your local maven repo, then add the following to your build.gradle file.
 
 ```groovy
 buildscript {
