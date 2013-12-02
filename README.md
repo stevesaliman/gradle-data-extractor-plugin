@@ -26,7 +26,7 @@ buildscript {
 		mavenLocal()
 	}
 	dependencies {
-		classpath "net.saliman:gradle-data-extractor-plugin:1.0.0"
+		classpath "net.saliman:gradle-data-extractor-plugin:1.2.0"
 	}
 }
 apply plugin: 'data-extractor'
@@ -48,9 +48,9 @@ extractData {
 }
 ```
 
-See http://gradle.1045684.n5.nabble.com/using-jdbc-driver-in-a-task-fails-td1435189.html for the reason we need the doFirst block.  The name of the 
-configuration used is not important, it just needs to match what we're using
-in the doFirst block.
+See http://gradle.1045684.n5.nabble.com/using-jdbc-driver-in-a-task-fails-td1435189.html
+for the reason we need the doFirst block.  The name of the configuration used is
+not important, it just needs to match what we're using in the doFirst block.
 
 There are a few configuration options that can be specified in the extractData
 task:
@@ -67,6 +67,28 @@ task:
 already exists, it will be overwritten.  The default is "data.sql" in the 
 working directory.
 
-- tables: a list of tables whose data we want.  The order of the tables is 
-important.  It needs to be specified in the order in which data must be deleted
-to avoid foreign key constraint errors.
+- tables: a list of metadata for the tables whose data we want.  The order of
+the tables is important.  It needs to be specified in the order in which data
+must be deleted to avoid foreign key constraint errors.  The metadata data can
+either be a table name, or a map of options for the table.  Supported options
+currently include:
+	1. name: The name of the table. This is the only required value in the map.
+	2. skipColumns: If present, the plugin will omit data for these columns.
+	   the data must be an array of lower case column names, e.g.
+	   ```skipColumns: [ 'a', 'b' ]``` not ```skipColumns: 'a, b'```
+	3. orderBy: The columns by which we order the insert statements.
+	4. startSequenceNum: If present a statement will be added before the insert
+	   statements to reset the auto increment value for the table's ids to the
+	   given number. This will have no impact on tables that don't have the auto
+	   incremented column in the ```skipColumns``` property.
+	5. endSequenceNum: If present, a statement will be added after the table's
+	   insert statements to bump the auto increment sequence to the given
+	   number.
+
+Example:```
+tables = [
+  'some_table',
+  [ name: 'second_table', skipColumns: ['id'], startSequenceNum: 1 ],
+  [ name: 'third_table', orderBy: 'last_name, first_name' ]
+]
+```
