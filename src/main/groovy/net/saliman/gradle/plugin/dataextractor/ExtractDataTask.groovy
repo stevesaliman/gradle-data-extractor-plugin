@@ -184,7 +184,7 @@ class ExtractDataTask extends DefaultTask {
 		if ( includeCommit ) {
 			file.append("commit;\n\n")
 		}
-		project.logger.info("  ${rowsProcessed} rows extracted")
+		project.logger.info("    ${rowsProcessed} rows extracted")
 
 	}
 	/**
