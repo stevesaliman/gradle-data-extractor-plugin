@@ -85,7 +85,8 @@ currently include:
 	   insert statements to bump the auto increment sequence to the given
 	   number.
 
-Example:```
+Example:
+```
 tables = [
   'some_table',
   [ name: 'second_table', skipColumns: ['id'], startSequenceNum: 1 ],
