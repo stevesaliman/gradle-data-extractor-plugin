@@ -113,7 +113,7 @@ class ExtractDataTask extends DefaultTask {
 			return
 		}
 		project.logger.info("    Resetting auto increment to ${table.startSequenceNum}")
-		file.append("alter table ${table.name} auto_increment=${table.startSequenceNum}\n\n")
+		file.append("alter table ${table.name} auto_increment=${table.startSequenceNum};\n\n")
 	}
 
 	/**
@@ -127,7 +127,7 @@ class ExtractDataTask extends DefaultTask {
 			return
 		}
 		project.logger.info("    Bumping auto increment to ${table.endSequenceNum}")
-		file.append("alter table ${table.name} auto_increment=${table.endSequenceNum}\n\n")
+		file.append("alter table ${table.name} auto_increment=${table.endSequenceNum};\n\n")
 	}
 
 	/**
