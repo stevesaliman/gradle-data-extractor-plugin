@@ -7,7 +7,7 @@ apply plugin: "idea"
 apply plugin: "eclipse"
 
 //archiveBaseName = "properties-plugin"
-version = "1.2.0"
+version = "1.2.1"
 group = "net.saliman"
 archivesBaseName = "gradle-data-extractor-plugin"
 def mavenRepoUploadUrl = "scp://maxdevcloud/var/www/maven/repo"

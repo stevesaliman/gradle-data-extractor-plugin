@@ -35,7 +35,7 @@ configurations {
 	extractor
 }
 dependencies {
-	extractor: "mysql:mysql-connector-java:5.1.9"
+	extractor: "org.mariadb.jdbc:mariadb-java-client:2.4.0"
 }
 
 extractData {

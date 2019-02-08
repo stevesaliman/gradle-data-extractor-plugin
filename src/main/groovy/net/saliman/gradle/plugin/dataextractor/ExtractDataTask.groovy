@@ -140,7 +140,7 @@ class ExtractDataTask extends DefaultTask {
 		def rowsProcessed = 0
 		def colNames = []
 		def columns = []
-		def db = dbFromMysqlUrl(jdbcUrl)
+		def db = dbFromJdbcUrl(jdbcUrl)
 		def colSql = "select lower(column_name) as column_name, data_type from information_schema.columns " +
 						"where table_schema = '${db}' " +
 						"and table_name = '${table.name}' " +
@@ -191,9 +191,12 @@ class ExtractDataTask extends DefaultTask {
 	 * Helper method to get the database name from a MySql URL, because we need
 	 * the database name to get the table metadata.
 	 */
-	def dbFromMysqlUrl(url) {
-		// Strip off the "jdbc:" toget a valid URI
-		def newUrl = url.find(~/mysql.*/)
+	def dbFromJdbcUrl(url) {
+		if ( !url.startsWith("jdbc:") ) {
+			throw new IllegalArgumentException("Jdbc urls must start with 'jdbc:'")
+		}
+		// Strip off the "jdbc:" toget a valid URI.
+		def newUrl = url.substring(5)
 		URI u = new URI(newUrl)
 		// Substring to get rid of the leading "/"
 		def db = u.getPath().substring(1)
