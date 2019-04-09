@@ -7,7 +7,7 @@ apply plugin: "idea"
 apply plugin: "eclipse"
 
 //archiveBaseName = "properties-plugin"
-version = "1.2.1"
+version = "1.2.2"
 group = "net.saliman"
 archivesBaseName = "gradle-data-extractor-plugin"
 def mavenRepoUploadUrl = "scp://maxdevcloud/var/www/maven/repo"
@@ -24,8 +24,8 @@ configurations {
 dependencies {
 	compile localGroovy()
 	compile gradleApi()
-	archives "org.apache.maven.wagon:wagon-ssh:2.2"
-	archives "org.apache.maven.wagon:wagon-ssh-external:2.2"
+	archives "org.apache.maven.wagon:wagon-ssh:3.3.2"
+	archives "org.apache.maven.wagon:wagon-ssh-external:3.3.2"
 }
 
 task sourceJar(type: Jar) {
@@ -59,56 +59,6 @@ uploadArchives {
 	}
 }
 
-idea {
-	module {
-
-		//if you prefer different output folders
-		inheritOutputDirs = false
-		outputDir = file('build/idea/out')
-		testOutputDir = file('build/idea/testOut')
-		//if you love browsing Javadoc
-		downloadJavadoc = true
-		//and hate reading sources :)
-		downloadSources = false
-	}
-}
-
-// Configure Idea plugin so that it generates project files that use git for 
-// source control.  Thank you to Eric Wendelin for showing me this trick.
-idea.project.ipr.withXml { provider ->
-	def node = provider.asNode()
-	def vcsConfig = node.component.find { it.'@name' == 'VcsDirectoryMappings' }
-	vcsConfig.mapping[0].'@vcs' = 'Git'
-
-	// set gradle home
-	def gradleSettings = node.appendNode('component',[name: 'GradleSettings'])
-	gradleSettings.appendNode('option', [name: 'SDK_HOME', value: gradle.gradleHomeDir.absolutePath])
-}
-
-// Get the keyfile, user, and passphrase for uploading, if they aren't already
-// defined.
-gradle.taskGraph.whenReady { taskGraph ->
-	if ( taskGraph.allTasks.find { it.name == "uploadArchives" } != null ) {
-		Console console = System.console()
-
-		if ( !project.hasProperty("privateKeyFile") ) {
-			if ( console == null ) {
-				throw new MissingPropertyException("No privateKeyFile given")
-			}
-		    def keyfile = console.readLine("\nPrivate Key file: ")
-			project.ext.privateKeyFile = keyfile
-		}
-
-		if ( !project.hasProperty("privateKeyPassphrase") ) {
-			if ( console == null ) {
-				throw new MissingPropertyException("No privateKeyPassphrase given")
-			}
-		    def passphrase = console.readPassword("\nPassphrase for ${privateKeyFile}: ")
-			project.ext.privateKeyPassphrase = passphrase
-		}
-	}
-}
-
 def getPomConfiguration() {
 	return {
 		name 'Gradle Data Extractor Plugin'
@@ -136,3 +86,32 @@ def getPomConfiguration() {
 		}
 	}
 }
+
+idea {
+	module {
+
+		//if you prefer different output folders
+		inheritOutputDirs = true
+		outputDir = file('build/idea/out')
+		testOutputDir = file('build/idea/testOut')
+		//if you love browsing Javadoc
+		downloadJavadoc = true
+		//and hate reading sources :)
+		downloadSources = false
+	}
+}
+
+// If we are going to upload, make sure we've got what we need to do it before
+// we start the build..
+gradle.taskGraph.whenReady { taskGraph ->
+	if ( taskGraph.allTasks.find { it.name == "uploadArchives" } != null ) {
+		if ( !project.hasProperty("privateKeyFile") ) {
+			throw new MissingPropertyException("No privateKeyFile given")
+		}
+
+		if ( !project.hasProperty("privateKeyPassphrase") ) {
+			throw new MissingPropertyException("No privateKeyPassphrase given")
+		}
+	}
+}
+
